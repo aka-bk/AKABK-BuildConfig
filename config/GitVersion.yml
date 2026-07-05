@@ -1,0 +1,93 @@
+workflow: GitFlow/v1
+assembly-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-scheme: MajorMinorPatchTag
+tag-prefix: v
+mode: ContinuousDeployment
+
+# Commit message conventions for version bumps
+# Supports both +semver and Jira-style references
+major-version-bump-message: '(\+semver:\s?(breaking|major)|\[breaking\])'
+minor-version-bump-message: '(\+semver:\s?(feature|minor)|\[feature\]|\[minor\])'
+patch-version-bump-message: '(\+semver:\s?(fix|patch)|\[fix\]|\[patch\])'
+no-bump-message: '(\+semver:\s?(none|skip)|\[skip[- ]?version\])'
+
+# Merge message patterns for GitFlow merges
+merge-message-formats:
+  TfsMetadata: '^GitVersion:.*GitVersion$'
+
+branches:
+  main:
+    regex: ^(main|master)$
+    label: ''
+    increment: Patch
+    is-main-branch: true
+    source-branches:
+      - release
+      - hotfix
+
+  develop:
+    regex: ^develop(ment)?$
+    label: alpha
+    increment: Minor
+    is-main-branch: false
+    tracks-release-branches: true
+    source-branches:
+      - main
+      - release
+      - hotfix
+
+  feature:
+    # Supports: feature/PROJ-123-description, feature/PROJ-123, feature/description
+    regex: ^feature[s]?[/-]([A-Z]+-\d+[/-])?
+    label: feature
+    increment: Inherit
+    source-branches:
+      - develop
+
+  bugfix:
+    # Supports: bugfix/PROJ-123-description, bugfix/PROJ-123, bugfix/description
+    regex: ^bugfix[es]?[/-]([A-Z]+-\d+[/-])?
+    label: bugfix
+    increment: Patch
+    source-branches:
+      - develop
+      - release
+
+  hotfix:
+    # Supports: hotfix/PROJ-123-description, hotfix/PROJ-123, hotfix/description
+    regex: ^hotfix[es]?[/-]([A-Z]+-\d+[/-])?
+    label: hotfix
+    increment: Patch
+    source-branches:
+      - main
+      - release
+
+  release:
+    # Supports: release/1.0.0, release/v1.0.0, release/PROJ-123-1.0.0
+    regex: ^release[s]?[/-](([A-Z]+-\d+[/-])?v?)?
+    label: rc
+    increment: None
+    is-release-branch: true
+    source-branches:
+      - develop
+
+  pull-request:
+    regex: ^(pull|pull-request|pr)[s]?[/-]
+    label: pr
+    increment: Inherit
+    source-branches:
+      - develop
+      - main
+      - feature
+      - bugfix
+      - hotfix
+      - release
+
+  # Support for Jira-only branch names (e.g., PROJ-123)
+  jira-issue:
+    regex: ^[A-Z]+-\d+$
+    label: issue
+    increment: Inherit
+    source-branches:
+      - develop
+      - main

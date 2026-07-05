@@ -1,0 +1,24 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- Let GitVersion handle all versioning -->
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <!-- Transitive SQLitePCLRaw.lib.e_sqlite3 2.1.11 has no patched NuGet version (deprecated, replaced by SourceGear.sqlite3) -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>true</GenerateAssemblyInformationalVersionAttribute>
+    <!-- Skip GitVersion when version is provided externally (e.g., Docker builds) -->
+    <GitVersion_NoFetchEnabled Condition="'$(Version)' != ''">true</GitVersion_NoFetchEnabled>
+    <GitVersion_NoNormalizeEnabled Condition="'$(Version)' != ''">true</GitVersion_NoNormalizeEnabled>
+  </PropertyGroup>
+
+  <!-- Only include GitVersion when version is not externally provided -->
+  <ItemGroup Condition="'$(Version)' == ''">
+    <PackageReference Include="GitVersion.MsBuild" Version="6.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
