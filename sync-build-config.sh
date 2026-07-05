@@ -20,9 +20,9 @@ ROOT="$(cd "$HERE/.." && pwd)"   # the aka-bk workspace root (parent of this rep
 TARGETS=(
   "AKABK-Brain|Directory.Build.props,.editorconfig,GitVersion.yml"
   "AKABK-MCP|Directory.Build.props,.editorconfig,GitVersion.yml"
-  # CLI opt-in: its Directory.Build.props is an app profile, not the shared
-  # library profile — only the shared lint config is safe to sync.
-  # "AKABK-CLI|.editorconfig"
+  # CLI: its Directory.Build.props is an app profile, not the shared library
+  # profile, so only the shared lint config is synced here.
+  "AKABK-CLI|.editorconfig"
 )
 
 CHECK=0

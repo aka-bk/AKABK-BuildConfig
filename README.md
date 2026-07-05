@@ -19,10 +19,9 @@ Defined in the `TARGETS` list in `sync-build-config.sh`:
 
 - **AKABK-Brain** — all three files
 - **AKABK-MCP** — all three files
-- **AKABK-CLI** — opt-in (commented out). Its `Directory.Build.props` is an
+- **AKABK-CLI** — `.editorconfig` only. Its `Directory.Build.props` is an
   *application* profile (single-file publishing, app metadata), not the shared
-  *library* profile, so only `.editorconfig` would be safe to sync. Uncomment
-  the entry to include it.
+  *library* profile, so it keeps its own and only the lint config is synced.
 
 The Node (Outlook, BrowserExtension, Stream-Deck) and Swift (TV) repos don't
 share meaningful build config and are intentionally excluded. Project-specific
