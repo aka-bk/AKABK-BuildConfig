@@ -1,0 +1,14 @@
+# targets.tsv — the canonical list of consumer repos and which shared files each
+# receives. Read by sync-build-config.sh (single source of truth; keep the
+# README's "Consumers" table in step with this file).
+#
+# Format: one target per line, TAB-separated:
+#   <repo-dir><TAB><comma-separated files (relative to repo root and to ./config)>
+#
+# Blank lines and lines beginning with '#' are ignored.
+
+AKABK-Brain	Directory.Build.props,.editorconfig,GitVersion.yml
+AKABK-MCP	Directory.Build.props,.editorconfig,GitVersion.yml
+# CLI: its Directory.Build.props is an app profile, not the shared library
+# profile, so only the shared lint config is synced here.
+AKABK-CLI	.editorconfig
