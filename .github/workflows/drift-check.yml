@@ -1,0 +1,52 @@
+name: drift-check
+
+# Validates the AKABK-BuildConfig sync tooling on every push and pull request.
+#
+# LIMITATION — a public GitHub-hosted runner checks out ONLY this repository; the
+# sibling consumer repos (AKABK-Brain, AKABK-MCP, AKABK-CLI, ...) referenced in
+# targets.tsv are separate, private repos and are NOT present here. A full,
+# cross-repo drift comparison therefore cannot run in this CI context — that is
+# intended to be run locally (or from a checkout of the whole aka-bk workspace)
+# with `bash sync-build-config.sh --check`, which diffs ./config against each
+# consumer's copy.
+#
+# What this workflow CAN do without the siblings, and does:
+#   1. Lint the sync script with shellcheck (syntax + common bug classes).
+#   2. Verify the script parses (`bash -n`).
+#   3. Run `sync-build-config.sh --check`, which — with no sibling repos present —
+#      still validates that the manifest (targets.tsv) parses, that every file it
+#      references exists under ./config, and that the drift logic runs without
+#      error. Missing-repo targets are reported as SKIP (not a failure); a missing
+#      canonical file DOES fail. This guards the tooling itself against breakage.
+#
+# For real drift detection across consumers, see the "Usage" section in README.md
+# and run the check locally where the sibling repos live side-by-side.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-sync-tooling:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lint sync script (shellcheck)
+        # shellcheck is preinstalled on GitHub-hosted ubuntu runners.
+        run: shellcheck sync-build-config.sh
+
+      - name: Parse-check sync script (bash -n)
+        run: bash -n sync-build-config.sh
+
+      - name: Run drift check (self-validation; siblings absent in CI)
+        # With no sibling consumer repos checked out, this validates the manifest
+        # and canonical config set. It fails on a malformed manifest or a missing
+        # canonical file, and — where sibling repos ARE available — on real drift.
+        run: bash sync-build-config.sh --check
