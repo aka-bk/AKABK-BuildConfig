@@ -68,6 +68,23 @@ AKABK-CLI	.editorconfig
 Optionally wire `./sync-build-config.sh --check` into each consumer's CI so a
 drifted copy fails the build.
 
+### CI (`.github/workflows/drift-check.yml`)
+
+This repo runs a `drift-check` workflow on every push and pull request to `main`.
+It lints the sync script with `shellcheck`, parse-checks it with `bash -n`, and
+runs `sync-build-config.sh --check`.
+
+**Limitation — no cross-repo drift in CI.** A public GitHub-hosted runner checks
+out *only* this repository; the sibling consumer repos in `targets.tsv`
+(`AKABK-Brain`, `AKABK-MCP`, `AKABK-CLI`) are separate, private repos and are not
+present. A full drift comparison against those consumers therefore cannot run in
+CI — it is meant to run **locally**, from the aka-bk workspace where the repos
+sit side-by-side, via `./sync-build-config.sh --check`. In CI, `--check` reports
+missing sibling repos as `SKIP` (not a failure) and instead self-validates the
+tooling: the manifest must parse and every file it references must exist under
+`./config`, or the build fails. This keeps the sync script and canonical config
+set honest even though the true drift check happens on a developer machine.
+
 ### Promoting an ad-hoc edit (`--from`)
 
 The normal push treats `./config` as canonical and **overwrites** the consumer
