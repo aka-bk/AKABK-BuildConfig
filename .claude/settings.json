@@ -1,0 +1,5 @@
+{
+  "env": {
+    "OTEL_RESOURCE_ATTRIBUTES": "farreach.project-code=untracked,farreach.repo=AKABK-BuildConfig"
+  }
+}
